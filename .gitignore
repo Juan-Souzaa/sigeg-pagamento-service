@@ -44,3 +44,4 @@ application-local.properties
 *.key
 *.pub
 !src/test/**/*.key
+!src/test/**/application-test.properties
