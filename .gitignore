@@ -38,7 +38,9 @@ Thumbs.db
 !**/src/test/**/target/
 
 # Arquivos com credenciais sensíveis
+application.properties
 application-local.properties
 *.env
 *.key
+*.pub
 !src/test/**/*.key
