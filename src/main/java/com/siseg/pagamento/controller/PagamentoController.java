@@ -10,9 +10,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-
 @RestController
 @RequestMapping("/api/pagamentos")
 @Tag(name = "Pagamentos", description = "Operações de pagamento")
@@ -51,22 +48,15 @@ public class PagamentoController {
     @Operation(summary = "Webhook do Asaas para confirmação de pagamento")
     public ResponseEntity<String> webhookAsaas(
             @RequestBody AsaasWebhookDTO webhook,
-            @RequestHeader("X-Signature") String signature,
+            @RequestHeader("asaas-access-token") String signature,
             HttpServletRequest request) {
         
-        try {
-            String payload = new String(request.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-            
-            if (!asaasWebhookService.validarAssinatura(signature, payload)) {
-                return ResponseEntity.badRequest().body("Assinatura inválida");
-            }
-            
-            asaasWebhookService.processarWebhook(webhook);
-            return ResponseEntity.ok("Webhook processado com sucesso");
-            
-        } catch (IOException e) {
-            return ResponseEntity.badRequest().body("Erro ao processar webhook");
+        if (!asaasWebhookService.validarAccessToken(signature)) {
+            return ResponseEntity.badRequest().body("Assinatura inválida");
         }
+        
+        asaasWebhookService.processarWebhook(webhook);
+        return ResponseEntity.ok("Webhook processado com sucesso");
     }
     
     @PostMapping("/pedidos/{pedidoId}/reembolso")
