@@ -65,11 +65,22 @@ public class PagamentoMapper {
         AsaasPaymentRequestDTO.CreditCardHolderInfoDTO holderInfo = new AsaasPaymentRequestDTO.CreditCardHolderInfoDTO();
         holderInfo.setName(cliente.getNome());
         holderInfo.setEmail(cliente.getEmail());
-        holderInfo.setCpfCnpj(cpfCnpj);
+        holderInfo.setCpfCnpj(cpfCnpj != null && !cpfCnpj.isEmpty() ? cpfCnpj : null);
+        holderInfo.setPostalCode(extrairCepNumerico(cliente.getCep()));
+        holderInfo.setAddressNumber(cliente.getAddressNumber());
+        holderInfo.setAddressComplement(cliente.getAddressComplement()); 
         holderInfo.setPhone(extrairTelefoneNumerico(cliente.getTelefone()));
         holderInfo.setMobilePhone(extrairTelefoneNumerico(cliente.getTelefone()));
         
         return holderInfo;
+    }
+    
+    private String extrairCepNumerico(String cep) {
+        if (cep == null || cep.isEmpty()) {
+            return null;
+        }
+        
+        return cep.replaceAll("[^0-9]", "");
     }
     
     private String extrairTelefoneNumerico(String telefone) {
@@ -88,5 +99,6 @@ public class PagamentoMapper {
         return request;
     }
 }
+
 
 

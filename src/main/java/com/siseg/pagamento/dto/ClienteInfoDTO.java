@@ -9,6 +9,10 @@ public class ClienteInfoDTO {
     private String email;
     private String telefone;
     private String cpfCnpj;
+    private String cep; 
+    private String addressNumber; 
+    private String addressComplement; 
 }
+
 
 

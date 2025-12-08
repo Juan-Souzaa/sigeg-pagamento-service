@@ -93,6 +93,13 @@ public class PagamentoService {
     }
     
     private void processarPagamentoCartao(Pagamento pagamento, CartaoCreditoRequestDTO cartaoDTO, ClienteInfoDTO clienteInfo, String remoteIp) {
+        if (clienteInfo.getCep() == null || clienteInfo.getCep().isEmpty()) {
+            throw new IllegalArgumentException("CEP do cliente é obrigatório para pagamento com cartão de crédito");
+        }
+        if (clienteInfo.getAddressNumber() == null || clienteInfo.getAddressNumber().isEmpty()) {
+            throw new IllegalArgumentException("Número do endereço do cliente é obrigatório para pagamento com cartão de crédito");
+        }
+        
         try {
             String asaasCustomerId = asaasService.buscarOuCriarCliente(clienteInfo);
             AsaasPaymentResponseDTO response = asaasService.criarPagamentoCartao(
@@ -251,5 +258,6 @@ public class PagamentoService {
         pagamento.setAtualizadoEm(java.time.Instant.now());
     }
 }
+
 
 

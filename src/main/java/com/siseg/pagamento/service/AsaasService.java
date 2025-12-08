@@ -3,6 +3,7 @@ package com.siseg.pagamento.service;
 import com.siseg.pagamento.dto.*;
 import com.siseg.pagamento.exception.PaymentGatewayException;
 import com.siseg.pagamento.mapper.PagamentoMapper;
+import com.siseg.pagamento.model.enumerations.MetodoPagamento;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -11,6 +12,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -52,14 +54,14 @@ public class AsaasService {
         }
     }
     
-    public AsaasPaymentResponseDTO criarPagamentoPix(Long pedidoId, java.math.BigDecimal valor, String asaasCustomerId) {
+    public AsaasPaymentResponseDTO criarPagamentoPix(Long pedidoId, BigDecimal valor, String asaasCustomerId) {
         AsaasPaymentRequestDTO request = criarRequestPagamento(pedidoId, valor, null, asaasCustomerId, null, null, null, null);
         return chamarApi("/payments", request);
     }
     
-    public AsaasPaymentResponseDTO criarPagamentoCartao(Long pedidoId, java.math.BigDecimal valor, String asaasCustomerId, 
+    public AsaasPaymentResponseDTO criarPagamentoCartao(Long pedidoId, BigDecimal valor, String asaasCustomerId, 
                                                        CartaoCreditoRequestDTO cartaoDTO, ClienteInfoDTO cliente, String remoteIp) {
-        AsaasPaymentRequestDTO request = criarRequestPagamento(pedidoId, valor, com.siseg.pagamento.model.enumerations.MetodoPagamento.CREDIT_CARD, asaasCustomerId, cartaoDTO, cliente, null, remoteIp);
+        AsaasPaymentRequestDTO request = criarRequestPagamento(pedidoId, valor, MetodoPagamento.CREDIT_CARD, asaasCustomerId, cartaoDTO, cliente, obterCpfCnpjCliente(cliente), remoteIp);
         return chamarApi("/payments", request);
     }
     
@@ -170,8 +172,8 @@ public class AsaasService {
         return pagamentoMapper.toAsaasCustomerRequest(cliente, obterCpfCnpjCliente(cliente));
     }
     
-    private AsaasPaymentRequestDTO criarRequestPagamento(Long pedidoId, java.math.BigDecimal valor, 
-                                                         com.siseg.pagamento.model.enumerations.MetodoPagamento metodo,
+    private AsaasPaymentRequestDTO criarRequestPagamento(Long pedidoId, BigDecimal valor, 
+                                                         MetodoPagamento metodo,
                                                          String asaasCustomerId, 
                                                          CartaoCreditoRequestDTO cartaoDTO, 
                                                          ClienteInfoDTO cliente, 
@@ -206,5 +208,6 @@ public class AsaasService {
         return request;
     }
 }
+
 
 
