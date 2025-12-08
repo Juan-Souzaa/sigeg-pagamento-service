@@ -96,7 +96,7 @@ class PagamentoControllerTest {
 
     @Test
     void deveProcessarWebhookComSucesso() throws Exception {
-        when(asaasWebhookService.validarAssinatura(anyString(), anyString())).thenReturn(true);
+        when(asaasWebhookService.validarAccessToken(anyString())).thenReturn(true);
         doNothing().when(asaasWebhookService).processarWebhook(any());
 
         AsaasWebhookDTO webhook = new AsaasWebhookDTO();
@@ -107,11 +107,11 @@ class PagamentoControllerTest {
 
         mockMvc.perform(post("/api/pagamentos/webhook")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-Signature", "test-signature")
+                        .header("asaas-access-token", "teste")
                         .content(objectMapper.writeValueAsString(webhook)))
                 .andExpect(status().isOk());
 
-        verify(asaasWebhookService, times(1)).validarAssinatura(anyString(), anyString());
+        verify(asaasWebhookService, times(1)).validarAccessToken(anyString());
         verify(asaasWebhookService, times(1)).processarWebhook(any());
     }
 
@@ -133,4 +133,5 @@ class PagamentoControllerTest {
         verify(pagamentoService, times(1)).processarReembolso(1L, "Teste");
     }
 }
+
 

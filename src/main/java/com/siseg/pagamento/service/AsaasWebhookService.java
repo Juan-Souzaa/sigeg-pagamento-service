@@ -28,8 +28,12 @@ public class AsaasWebhookService {
         this.pedidoServiceClient = pedidoServiceClient;
     }
     
-    public boolean validarAssinatura(String signature, String payload) {
-        return signature != null && signature.equals(webhookSecret);
+    public boolean validarAccessToken(String accessToken) {
+        if (webhookSecret == null || webhookSecret.isEmpty()) {
+            logger.warning("Webhook secret não configurado - webhook será rejeitado");
+            return false;
+        }
+        return accessToken != null && accessToken.equals(webhookSecret);
     }
     
     @Transactional
@@ -84,5 +88,8 @@ public class AsaasWebhookService {
         logger.warning("Pagamento recusado via webhook: " + asaasPaymentId + " - Pedido: " + pagamento.getPedidoId());
     }
 }
+
+
+
 
 
