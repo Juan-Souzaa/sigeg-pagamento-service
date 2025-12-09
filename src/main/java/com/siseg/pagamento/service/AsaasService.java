@@ -120,6 +120,26 @@ public class AsaasService {
         }
     }
     
+    public void confirmarPagamentoSandbox(String asaasPaymentId) {
+        try {
+            webClient.post()
+                    .uri("/sandbox/payment/{id}/confirm", asaasPaymentId)
+                    .retrieve()
+                    .bodyToMono(Void.class)
+                    .block();
+            logger.info("Pagamento confirmado no sandbox: " + asaasPaymentId);
+        } catch (WebClientResponseException e) {
+            logger.severe("Erro do Asaas ao confirmar pagamento no sandbox (HTTP " + e.getStatusCode() + "): " + e.getResponseBodyAsString());
+            throw new PaymentGatewayException("Erro ao confirmar pagamento no sandbox: " + e.getResponseBodyAsString(), e);
+        } catch (WebClientException e) {
+            logger.severe("Erro de conexão ao confirmar pagamento no sandbox: " + e.getMessage());
+            throw new PaymentGatewayException("Erro de conexão com o gateway de pagamento. Verifique sua conexão com a internet.", e);
+        } catch (Exception e) {
+            logger.severe("Erro ao confirmar pagamento no sandbox: " + e.getMessage());
+            throw new PaymentGatewayException("Erro ao confirmar pagamento no sandbox: " + e.getMessage());
+        }
+    }
+    
     private String buscarClientePorEmail(String email) {
         AsaasCustomerResponseDTO existingCustomer = buscarCliente(email);
         if (temClienteValido(existingCustomer)) {
