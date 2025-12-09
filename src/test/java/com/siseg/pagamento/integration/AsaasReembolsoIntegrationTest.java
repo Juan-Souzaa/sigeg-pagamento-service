@@ -52,9 +52,9 @@ class AsaasReembolsoIntegrationTest {
         clienteInfo = new ClienteInfoDTO();
         clienteInfo.setId(1L);
         clienteInfo.setNome("Cliente Teste Integração Reembolso");
-        clienteInfo.setEmail("teste.reembolso@example.com");
+        clienteInfo.setEmail("teste.reembolso." + System.currentTimeMillis() + "@example.com");
         clienteInfo.setTelefone("(11) 99415-2001");
-        clienteInfo.setCpfCnpj("12345678900");
+        clienteInfo.setCpfCnpj("24971563792");
     }
 
     @Test
@@ -69,7 +69,6 @@ class AsaasReembolsoIntegrationTest {
             return;
         }
 
-        // Criar pagamento PIX
         PagamentoResponseDTO pagamentoResponse = pagamentoService.criarPagamento(
             criarPagamentoRequest, 
             clienteInfo, 
@@ -86,7 +85,6 @@ class AsaasReembolsoIntegrationTest {
         
         String asaasPaymentId = pagamento.getAsaasPaymentId();
         
-        // Confirmar pagamento no sandbox
         asaasService.confirmarPagamentoSandbox(asaasPaymentId);
         
         try {
@@ -96,14 +94,12 @@ class AsaasReembolsoIntegrationTest {
             fail("Teste interrompido durante espera");
         }
         
-        // Verificar status do pagamento
         AsaasPaymentResponseDTO paymentStatus = asaasService.buscarPagamento(asaasPaymentId);
         
         String status = paymentStatus.getStatus();
         assertTrue("RECEIVED".equals(status) || "CONFIRMED".equals(status) || "RECEIVED_IN_CASH_APPROVED".equals(status),
                 "Pagamento deve estar confirmado após chamada ao endpoint de confirmação");
         
-        // Atualizar status do pagamento para PAID
         pagamento.setStatus(StatusPagamento.PAID);
         pagamentoRepository.save(pagamento);
         
@@ -123,7 +119,6 @@ class AsaasReembolsoIntegrationTest {
                 }
                 tentativasReembolso++;
                 
-                // Processar reembolso
                 PagamentoResponseDTO resultado = pagamentoService.processarReembolso(
                     pagamento.getPedidoId(), 
                     motivo

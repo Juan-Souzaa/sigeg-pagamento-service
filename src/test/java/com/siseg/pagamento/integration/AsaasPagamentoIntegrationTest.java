@@ -57,9 +57,9 @@ class AsaasPagamentoIntegrationTest {
         clienteInfo = new ClienteInfoDTO();
         clienteInfo.setId(1L);
         clienteInfo.setNome("Cliente Teste Pagamento");
-        clienteInfo.setEmail("teste.pagamento@example.com");
+        clienteInfo.setEmail("teste.pagamento." + System.currentTimeMillis() + "@example.com");
         clienteInfo.setTelefone("(11) 99415-2001");
-        clienteInfo.setCpfCnpj("12345678900");
+        clienteInfo.setCpfCnpj("24971563792");
     }
 
     @Test
@@ -112,6 +112,9 @@ class AsaasPagamentoIntegrationTest {
         cartaoDTO.setValidade("12/25");
         cartaoDTO.setCvv("123");
         criarPagamentoRequestCartao.setCartaoCredito(cartaoDTO);
+
+        clienteInfo.setCep("01310-100");
+        clienteInfo.setAddressNumber("123");
 
         PagamentoResponseDTO response = pagamentoService.criarPagamento(
             criarPagamentoRequestCartao, 
