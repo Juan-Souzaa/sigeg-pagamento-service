@@ -44,7 +44,7 @@ class AsaasReembolsoIntegrationTest {
     @Transactional
     void setUp() {
         criarPagamentoRequest = new CriarPagamentoRequestDTO();
-        criarPagamentoRequest.setPedidoId(1L);
+        criarPagamentoRequest.setPedidoId(100L);
         criarPagamentoRequest.setMetodoPagamento(MetodoPagamento.PIX);
         criarPagamentoRequest.setValor(new BigDecimal("15.00"));
         criarPagamentoRequest.setTroco(null);
