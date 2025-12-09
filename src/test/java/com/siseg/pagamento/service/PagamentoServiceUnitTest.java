@@ -116,6 +116,10 @@ class PagamentoServiceUnitTest {
         cartaoDTO.setCvv("123");
         criarPagamentoRequest.setCartaoCredito(cartaoDTO);
 
+        // Configurar CEP e número do endereço obrigatórios para pagamento com cartão
+        clienteInfo.setCep("01310-100");
+        clienteInfo.setAddressNumber("123");
+
         asaasPaymentResponse.setStatus("CONFIRMED");
 
         when(pagamentoRepository.save(any(Pagamento.class))).thenAnswer(invocation -> {
